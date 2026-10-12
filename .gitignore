@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Compiled output
+dist/
+build/
+
+# Environment and sensitive variables
+.env
+*.env.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor directories (optional, but convenient)
+.vscode/
+.idea/
+.DS_Store
