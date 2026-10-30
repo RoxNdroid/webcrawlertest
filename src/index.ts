@@ -1,1 +1,50 @@
-console.log("Hello, World!");
+import { crawlSiteAsync } from "./crawl";
+import { writeJSONReport } from "./report";
+
+async function main() {
+if (process.argv.length < 5){
+     console.log("Error: not enough arguments provided");
+     console.log(
+      "usage: node dist/index.js <baseURL> <maxConcurrency> <maxPages>",
+    );
+    process.exit(1);
+}
+if (process.argv.length > 5){
+     console.log("Error: too many arguments (websites) provided");
+    process.exit(1);
+}
+  const baseURL = process.argv[2];
+  const maxConcurrency = Number(process.argv[3]);
+  const maxPages = Number(process.argv[4]);
+  
+  if (!Number.isFinite(maxConcurrency) || maxConcurrency <= 0) {
+    console.log("invalid maxConcurrency");
+    process.exit(1);
+  }
+  
+   if (!Number.isFinite(maxPages) || maxPages <= 0) {
+    console.log("invalid maxPages");
+    process.exit(1);
+  }
+  
+   console.log(
+    `starting crawl of: ${baseURL} (concurrency=${maxConcurrency}, maxPages=${maxPages})...`,
+  );
+
+ const pages = await crawlSiteAsync(baseURL, maxConcurrency, maxPages);
+
+for (const [page, links] of Object.entries(pages)) {
+    console.log(`Found ${links} links to ${page}`);
+  }
+      console.log("Finished crawling.");
+    const firstPage = Object.values(pages)[0];
+    if (firstPage) {
+      console.log(
+        `First page record: ${firstPage["url"]} - ${firstPage["heading"]}`,
+      );
+    }
+  writeJSONReport(pages, "report.json");
+
+  process.exit(0);
+};
+main();
